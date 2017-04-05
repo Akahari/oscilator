@@ -8,9 +8,6 @@ import java.util.Random;
  * Created by Akahari on 02-Apr-17.
  */
 public class SpringApplet extends JApplet {             // new class inheriting class JApplet
-    public static void main(String[] args) {
-
-    }
 
     public void init(){                 //overwritten method init()
         final int DECIMAL_PLACES = 2;
