@@ -7,7 +7,6 @@ import java.lang.String;
 public class SimEngine {
     private final double GRAVITATIONAL_ACCELERATION = 9.86;
     private final int DECIMAL_PLACES = 2;
-    private int calculateCounter = 0;
 
     private double mass = 0;
     private double elasticity = 0;
@@ -20,7 +19,7 @@ public class SimEngine {
     private double hookCoordinateX = 0;
     private double hookCoordinateY = 0;
 
-    private double startMassCoordinateX = 0;
+    private double startMassCoordinateX = 0;                                // "start*" fields are used to reset the simulation
     private double startMassCoordinateY = 0;
     private double startMassVelocityX = 0;
     private double startMassVelocityY = 0;
@@ -65,21 +64,19 @@ public class SimEngine {
     }
 
     public void calculateCourse(double stepTime){
-        calculateCounter++;
-        System.out.println("Calculate Count: " + calculateCounter);
-        this.massCoordinateX = this.massCoordinateX + this.massVelocityX * stepTime + this.acceleration.coordinateX * Math.pow(stepTime,2) / 2;
+        this.massCoordinateX = this.massCoordinateX + this.massVelocityX * stepTime + this.acceleration.coordinateX * Math.pow(stepTime,2) / 2;             // updating position using equation s = s0 + vt + 0.5at^2
         this.massCoordinateY = this.massCoordinateY + this.massVelocityY * stepTime + this.acceleration.coordinateY * Math.pow(stepTime,2) / 2;
-        this.massVelocityX = this.massVelocityX + this.acceleration.coordinateX * stepTime;
+        this.massVelocityX = this.massVelocityX + this.acceleration.coordinateX * stepTime;                                                                 // updating speed using equation v = v0 + at
         this.massVelocityY = this.massVelocityY + this.acceleration.coordinateY * stepTime;
-        this.springVector = new Vector2D(this.massCoordinateX - this.hookCoordinateX, this.massCoordinateY - this.hookCoordinateY);
-        this.massVelocityVector = new Vector2D (this.massVelocityX , this.massVelocityY);
-        this.elasticityForceVector = this.springVector.normalisedVector().multipliedVector( ( this.springLooseLength - this.springVector.lengthOfVector() ) * this.elasticity );
-        this.dampingForceVector = new Vector2D(-1 * this.damping * this.massVelocityVector.coordinateX, -1 * this.damping * massVelocityVector.coordinateY);
-        this.netForce = gravityForceVector.sumOfVectors( elasticityForceVector.sumOfVectors(dampingForceVector) );
-        this.acceleration = netForce.multipliedVector( (1/this.mass) );
+        this.springVector = new Vector2D(this.massCoordinateX - this.hookCoordinateX, this.massCoordinateY - this.hookCoordinateY);                 // updating spring vector regarding mass displacement
+        this.massVelocityVector = new Vector2D (this.massVelocityX , this.massVelocityY);                                                                   // assembling velocity vector from its components
+        this.elasticityForceVector = this.springVector.normalisedVector().multipliedVector( ( this.springLooseLength - this.springVector.lengthOfVector() ) * this.elasticity );    // updating spring reaction force based on new mass position/new spring lenght
+        this.dampingForceVector = new Vector2D(-1 * this.damping * this.massVelocityVector.coordinateX, -1 * this.damping * massVelocityVector.coordinateY);                // updating damping force based on new velocity vector
+        this.netForce = gravityForceVector.sumOfVectors( elasticityForceVector.sumOfVectors(dampingForceVector) );                                          // updating net force
+        this.acceleration = netForce.multipliedVector( (1/this.mass) );                                                                                     // updating acceleration
     }
 
-    public void set(String name, double value){
+    public void set(String name, double value){                 // values setter (unused in this programme; in this case values are assigned by calculations done in calculateCourse(stepTime) )
         switch(name){
             case "mass": this.mass = value; break;
             case "elasticity": this.elasticity = value; break;
@@ -95,7 +92,7 @@ public class SimEngine {
         }
     }
 
-    public void get(String name){
+    public void get(String name){                           // read-only getter
         switch(name){
             case "mass": System.out.println("Mass value is: " + Util.round(this.mass, DECIMAL_PLACES)); break;
             case "elasticity": System.out.println("Elasticity value is: " + Util.round(this.elasticity, DECIMAL_PLACES)); break;
@@ -132,7 +129,7 @@ public class SimEngine {
         }
     }
 
-    public double getValue(String name){
+    public double getValue(String name){                            // value fields getter
         switch(name){
             case "mass": return Util.round(this.mass, DECIMAL_PLACES);
             case "elasticity": return Util.round(this.elasticity, DECIMAL_PLACES);
@@ -156,7 +153,7 @@ public class SimEngine {
         }
     }
 
-    public Vector2D getVector(String name){
+    public Vector2D getVector(String name){             // Vector2D fields getter
         switch(name){
             case "springVector": return this.springVector;
             case "massVelocityVector": return this.massVelocityVector;
@@ -169,7 +166,7 @@ public class SimEngine {
         }
     }
 
-    public void reset(){
+    public void reset(){                                        // method restoring the initial values
         this.massCoordinateX = this.startMassCoordinateX;
         this.massCoordinateY = this.startMassCoordinateY;
         this.massVelocityX = this.startMassVelocityX;

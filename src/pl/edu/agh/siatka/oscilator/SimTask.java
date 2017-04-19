@@ -8,8 +8,7 @@ public class SimTask extends TimerTask{             //new class inheriting class
     private SimEngine engine;
     private SpringApplet applet;
     private double stepTime;
-    private int runCounter = 0;
-    //private Vector2D previousSpringVector;
+
 
     public SimTask(SimEngine engine, SpringApplet applet, double stepTime){
         this.engine = engine;
@@ -18,13 +17,8 @@ public class SimTask extends TimerTask{             //new class inheriting class
     }
 
         public void run(){                              //overwritten methode run()
-            runCounter++;
-            System.out.println("Run Count: " + runCounter);
-            engine.calculateCourse(stepTime / 1000);
-            System.out.println("Finished calculations");
+            engine.calculateCourse(stepTime / 1000);        // calculating how the situation changes after step time
             applet.validate();
-            System.out.println("Validated");
-            applet.repaint();
-            System.out.println("Repainted");
+            applet.repaint();           // updating the spring drawing in applet
         }
 }
