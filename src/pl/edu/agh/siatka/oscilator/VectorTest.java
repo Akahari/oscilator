@@ -1,5 +1,8 @@
 package pl.edu.agh.siatka.oscilator;
 
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.Random;
 
 /**

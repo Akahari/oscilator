@@ -6,10 +6,11 @@ public class Vector2D {
     public double coordinateX, coordinateY;                 //public fields of vector coordinates
     private final int DECIMAL_PLACES = 2;
 
-    public Vector2D(){                                      //default constructor
+    public Vector2D(Vector2D vector2D){                                      //default constructor
         coordinateX = 0;
         coordinateY = 0;
     }
+
     public Vector2D(double x, double y){                    //constructor with arguments
         this.coordinateX = x;
         this.coordinateY = y;
