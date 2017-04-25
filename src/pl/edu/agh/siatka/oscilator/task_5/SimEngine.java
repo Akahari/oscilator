@@ -19,13 +19,6 @@ public class SimEngine {
     private double hookCoordinateX;
     private double hookCoordinateY;
 
-    private double startMassCoordinateX;                                // "start*" fields are used to reset the simulation
-    private double startMassCoordinateY;
-    private double startMassVelocityX;
-    private double startMassVelocityY;
-    private double startHookCoordinateX;
-    private double startHookCoordinateY;
-
     private Vector2D springVector;
     private Vector2D massVelocityVector;
     private Vector2D elasticityForceVector;
@@ -46,13 +39,6 @@ public class SimEngine {
         this.massVelocityY = massVelocityY;
         this.hookCoordinateX = hookCoordinateX;
         this.hookCoordinateY = hookCoordinateY;
-
-        this.startMassCoordinateX = massCoordinateX;
-        this.startMassCoordinateY = massCoordinateY;
-        this.startMassVelocityX = massVelocityX;
-        this.startMassVelocityY = massVelocityY;
-        this.startHookCoordinateX = hookCoordinateX;
-        this.startHookCoordinateY = hookCoordinateY;
 
         this.gravityForceVector = new Vector2D(0, this.mass * GRAVITATIONAL_ACCELERATION);
         this.springVector = new Vector2D(this.massCoordinateX - this.hookCoordinateX, this.massCoordinateY - this.hookCoordinateY);
@@ -90,19 +76,6 @@ public class SimEngine {
             case "hookCoordinateY": this.hookCoordinateY = value; break;
             default: throw new IllegalArgumentException("Invalid field: " + name);
         }
-    }
-
-    public void setNewPosition(double massCoordinateX, double massCoordinateY){
-        this.massCoordinateX = massCoordinateX;
-        this.massCoordinateY = massCoordinateY;
-        this.startMassCoordinateX = massCoordinateX;
-        this.startMassCoordinateY = massCoordinateY;
-
-        this.springVector = new Vector2D(this.massCoordinateX - this.hookCoordinateX, this.massCoordinateY - this.hookCoordinateY);
-        this.elasticityForceVector = this.springVector.normalisedVector().multipliedVector( ( this.springLooseLength - this.springVector.lengthOfVector() ) * this.elasticity );
-        this.dampingForceVector = new Vector2D(-1 * this.damping * this.massVelocityVector.coordinateX, -1 * this.damping * massVelocityVector.coordinateY);
-        this.netForce = gravityForceVector.sumOfVectors( elasticityForceVector.sumOfVectors(dampingForceVector) );
-        this.acceleration = netForce.multipliedVector( (1/this.mass) );
     }
 
     public void get(String name){                           // read-only getter
@@ -177,22 +150,6 @@ public class SimEngine {
             case "acceleration": return this.acceleration;
             default: throw new IllegalArgumentException("Invalid vector: " + name);
         }
-    }
-
-    public void refresh(){                                        // method restoring the initial values
-        this.massCoordinateX = this.startMassCoordinateX;
-        this.massCoordinateY = this.startMassCoordinateY;
-        this.massVelocityX = this.startMassVelocityX;
-        this.massVelocityY = this.startMassVelocityY;
-        this.hookCoordinateX = this.startHookCoordinateX;
-        this.hookCoordinateY = this.startHookCoordinateY;
-
-        this.springVector = new Vector2D(this.massCoordinateX - this.hookCoordinateX, this.massCoordinateY - this.hookCoordinateY);
-        this.massVelocityVector = new Vector2D (this.massVelocityX , this.massVelocityY);
-        this.elasticityForceVector = this.springVector.normalisedVector().multipliedVector( ( this.springLooseLength - this.springVector.lengthOfVector() ) * this.elasticity );
-        this.dampingForceVector = new Vector2D(-1 * this.damping * this.massVelocityVector.coordinateX, -1 * this.damping * massVelocityVector.coordinateY);
-        this.netForce = gravityForceVector.sumOfVectors( elasticityForceVector.sumOfVectors(dampingForceVector) );
-        this.acceleration = netForce.multipliedVector( (1/this.mass) );
     }
 
     public void reset(){

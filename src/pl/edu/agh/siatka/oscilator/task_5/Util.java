@@ -1,4 +1,7 @@
 package pl.edu.agh.siatka.oscilator.task_5;
+
+import java.awt.*;
+
 /**
  * Created by Akahari on 02-Apr-17.
  */
@@ -18,5 +21,9 @@ public class Util {
         value = value * factor;
         long tmp = Math.round(value);
         return tmp / factor;
+    }
+
+    public static Point realMousePosition(Point mousePosition){
+        return new Point(mousePosition.x - 8, mousePosition.y - 50);
     }
 }

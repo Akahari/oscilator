@@ -12,7 +12,6 @@ import java.util.Timer;
  */
 public class SpringApplet extends JApplet implements MouseListener, MouseMotionListener {             // new class inheriting class JApplet
 
-    private Window window;
     private SimEngine engine;
     private SimTask simTask;
     private Timer timer;
@@ -20,8 +19,8 @@ public class SpringApplet extends JApplet implements MouseListener, MouseMotionL
     private double elasticity = 4;
     private double damping = 0.6;
     private double springLooseLength = 2;
-    private double massCoordinateX = 0;
-    private double massCoordinateY = 4;
+    private double massCoordinateX = 2;
+    private double massCoordinateY = 1;
     private double massVelocityX = 0;
     private double massVelocityY = 0;
     private int startCoordinateX;                       // fields helping drawing the spring
@@ -38,7 +37,6 @@ public class SpringApplet extends JApplet implements MouseListener, MouseMotionL
         addMouseListener(this);
         addMouseMotionListener(this);
         this.setSize(new Dimension(1000, 800));         // setting size of applet window so the whole spring movement can be seen
-        //window.setLocation(0,0);
         this.engine = new SimEngine( this.mass, this.elasticity, this.damping, this.springLooseLength, this.massCoordinateX, this.massCoordinateY, this.massVelocityX, this.massVelocityY, 0, 0);   // creating a new simulation model
         setDrawingCoordinates( this.engine.getValue("hookCoordinateX") * 100 + 500,  this.engine.getValue("hookCoordinateY") * 100, this.engine.getVector("springVector"));    // setting coordinates used by paint() method to draw the spring
         this.simTask = new SimTask(this.engine, this, stepTime);
@@ -48,7 +46,7 @@ public class SpringApplet extends JApplet implements MouseListener, MouseMotionL
 
     public void paint(Graphics graph){       //overwritten method paint()
         if(this.paintCounter > (15 * 1000 / this.stepTime ) ) {            // every 15 seconds the simulation will be repeated
-            this.engine.refresh();
+            this.engine.reset();
             this.paintCounter = 0;
         }
         this.paintCounter++;
@@ -91,11 +89,12 @@ public class SpringApplet extends JApplet implements MouseListener, MouseMotionL
 
     @Override
     public void mousePressed(MouseEvent e) {
-        Point mousePosition = e.getLocationOnScreen();
-        if( Math.sqrt( Math.pow( mousePosition.x - 8 - this.endCoordinateX, 2) + Math.pow( mousePosition.y - 50 - this.endCoordinateY, 2) )  <= 10) {
+        Point realMousePosition = Util.realMousePosition(e.getLocationOnScreen());
+        if( Math.sqrt( Math.pow( realMousePosition.x - this.endCoordinateX, 2) + Math.pow( realMousePosition.y - this.endCoordinateY, 2) )  <= 10) {
             this.mouseIsDragged = true;
             this.engine.reset();
             this.timer.cancel();
+            this.timer.purge();
             this.paintCounter = 0;
         }
         e.consume();
@@ -105,9 +104,13 @@ public class SpringApplet extends JApplet implements MouseListener, MouseMotionL
     public void mouseReleased(MouseEvent e) {
         if(this.mouseIsDragged){
             this.mouseIsDragged = false;
-            System.out.println("release");
+            this.engine = new SimEngine( this.mass, this.elasticity, this.damping, this.springLooseLength, this.massCoordinateX, this.massCoordinateY, this.massVelocityX, this.massVelocityY, 0, 0);   // creating a new simulation model
+            setDrawingCoordinates( this.engine.getValue("hookCoordinateX") * 100 + 500,  this.engine.getValue("hookCoordinateY") * 100, this.engine.getVector("springVector"));
+            this.simTask = new SimTask(this.engine, this, stepTime);
+            this.timer = new Timer();
             this.timer.scheduleAtFixedRate(this.simTask, this.stepTimeLong, this.stepTimeLong);
         }
+        e.consume();
     }
 
     @Override
@@ -123,10 +126,9 @@ public class SpringApplet extends JApplet implements MouseListener, MouseMotionL
     @Override
     public void mouseDragged(MouseEvent e) {
         if(mouseIsDragged){
-            Point mousePosition = e.getLocationOnScreen();
-            this.massCoordinateX = mousePosition.x;
-            this.massCoordinateY = mousePosition.y;
-            System.out.println("mouse position x: " + this.massCoordinateX + "mouse position x: " + this.massCoordinateY);
+            Point realMousePosition = Util.realMousePosition(e.getLocationOnScreen());
+            this.massCoordinateX = (double) (realMousePosition.x - 500)/100;
+            this.massCoordinateY = (double) (realMousePosition.y)/100;
         }
         e.consume();
     }
