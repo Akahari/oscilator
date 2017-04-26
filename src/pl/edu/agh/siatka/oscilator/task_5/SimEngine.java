@@ -154,11 +154,11 @@ public class SimEngine {
 
     public void reset(){
         this.massCoordinateX = 0;
-        this.massCoordinateY = 0;
+        this.massCoordinateY = 1;
         this.massVelocityX = 0;
         this.massVelocityY = 0;
         this.hookCoordinateX = 0;
-        this.hookCoordinateY = 0;
+        this.hookCoordinateY = 1;
 
         this.springVector = new Vector2D(0,0);
         this.massVelocityVector = new Vector2D (0,0);
