@@ -43,7 +43,7 @@ public class SpringApplet extends JApplet implements MouseListener, MouseMotionL
         this.setSize(new Dimension(1300, 800));         // setting size of applet window so the whole spring movement can be seen
         setTextField();
 
-        this.engine = new SimEngine( this.mass, this.elasticity, this.damping, this.springLooseLength, this.massCoordinateX, this.massCoordinateY + 1, this.massVelocityX, this.massVelocityY, 0, 0 + 1);   // creating a new simulation model
+        this.engine = new SimEngine( this.mass, this.elasticity, this.damping, this.gravitationalAcceleration, this.springLooseLength, this.massCoordinateX, this.massCoordinateY + 1, this.massVelocityX, this.massVelocityY, 0, 0 + 1);   // creating a new simulation model
         setDrawingCoordinates( this.engine.getValue("hookCoordinateX") * 100 + 500,  this.engine.getValue("hookCoordinateY") * 100 + 100, this.engine.getVector("springVector"));    // setting coordinates used by paint() method to draw the spring
 
         this.simTask = new SimTask(this.engine, this, stepTime);
@@ -85,7 +85,7 @@ public class SpringApplet extends JApplet implements MouseListener, MouseMotionL
         }
         this.paintCounter++;
         setDrawingCoordinates( this.engine.getValue("hookCoordinateX") * 100 + 500,  this.engine.getValue("hookCoordinateY") * 100, this.engine.getVector("springVector"));  // updating the position of the end of the spring
-        graph.clearRect(0, 30, 1000, 2000);
+        graph.clearRect(0, 30, 1500, 2000);
         if(this.engine.getVector("springVector").coordinateY < -0.6) graph.clearRect(0, 0, 1000, 2000);
         graph.drawLine(this.startCoordinateX, this.startCoordinateY, this.endCoordinateX, this.endCoordinateY);         // drawing the spring
         graph.drawOval(this.endCoordinateX - 10, this.endCoordinateY - 10, 20, 20);       // drawing the object (mass)
@@ -120,7 +120,7 @@ public class SpringApplet extends JApplet implements MouseListener, MouseMotionL
     public void mouseReleased(MouseEvent e) {
         if(this.mouseIsDragged){
             this.mouseIsDragged = false;
-            this.engine = new SimEngine( this.mass, this.elasticity, this.damping, this.springLooseLength, this.massCoordinateX, this.massCoordinateY, this.massVelocityX, this.massVelocityY, 0, 1);   // creating a new simulation model
+            this.engine = new SimEngine( this.mass, this.elasticity, this.damping, this.gravitationalAcceleration, this.springLooseLength, this.massCoordinateX, this.massCoordinateY, this.massVelocityX, this.massVelocityY, 0, 1);   // creating a new simulation model
             setDrawingCoordinates( this.engine.getValue("hookCoordinateX") * 100 + 500,  this.engine.getValue("hookCoordinateY") * 100, this.engine.getVector("springVector"));
             this.simTask = new SimTask(this.engine, this, stepTime);
             this.timer = new Timer();
@@ -160,18 +160,21 @@ public class SpringApplet extends JApplet implements MouseListener, MouseMotionL
         String elasticityInput = elasticityInputField.getText();
         String dampingInput = dampingInputField.getText();
         String springLooseLengthInput = springLooseLengthInputField.getText();
+        String gravitationalAccelerationInput = gravitationalAccelerationField.getText();
         if(Double.parseDouble(massInput) != 0) this.mass = Util.round(Double.parseDouble(massInput)/1000, 3);
         if(Double.parseDouble(elasticityInput) != 0) this.elasticity = Util.round(Double.parseDouble(elasticityInput)/100, 2);
         if(Double.parseDouble(dampingInput) != 0) this.damping = Util.round(Double.parseDouble(dampingInput)/100,2);
         if(Double.parseDouble(springLooseLengthInput) != 0) this.springLooseLength = Util.round(Double.parseDouble(springLooseLengthInput)/100,2);
+        if(Double.parseDouble(gravitationalAccelerationInput) != 0) this.gravitationalAcceleration = Util.round(Double.parseDouble(gravitationalAccelerationInput)/100,2);
         engine.set("mass", this.mass);                                                                                                                              // sending new values to the simulation engine
         engine.set("elasticity", this.elasticity);
         engine.set("damping", this.damping);
         engine.set("springLooseLength" ,this.springLooseLength);
+        engine.set("gravitationalAcceleration" ,this.gravitationalAcceleration);
         this.timer.cancel();                                                                                                                                        // reseting simulation in order to use updated engine
         this.timer.purge();
         this.paintCounter = 0;
-        this.engine = new SimEngine( this.mass, this.elasticity, this.damping, this.springLooseLength, this.massCoordinateX, this.massCoordinateY, this.massVelocityX, this.massVelocityY, 0, 1);   // creating a new simulation model
+        this.engine = new SimEngine( this.mass, this.elasticity, this.damping, this.gravitationalAcceleration ,this.springLooseLength, this.massCoordinateX, this.massCoordinateY, this.massVelocityX, this.massVelocityY, 0, 1);   // creating a new simulation model
         setDrawingCoordinates( this.engine.getValue("hookCoordinateX") * 100 + 500,  this.engine.getValue("hookCoordinateY") * 100, this.engine.getVector("springVector"));
         this.simTask = new SimTask(this.engine, this, stepTime);
         this.timer = new Timer();

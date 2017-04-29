@@ -24,6 +24,6 @@ public class Util {
     }
 
     public static Point realMousePosition(Point mousePosition){
-        return new Point(mousePosition.x - 8, mousePosition.y - 50);
+        return new Point(mousePosition.x - 8, mousePosition.y - 65);
     }
 }

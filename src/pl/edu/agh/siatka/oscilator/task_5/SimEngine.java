@@ -5,12 +5,12 @@ package pl.edu.agh.siatka.oscilator.task_5;
 import java.lang.String;
 
 public class SimEngine {
-    private final double GRAVITATIONAL_ACCELERATION = 9.86;
     private final int DECIMAL_PLACES = 2;
 
     private double mass;
     private double elasticity;
     private double damping;
+    private double gravitationalAcceleration = 9.86;
     private double springLooseLength;
     private double massCoordinateX;
     private double massCoordinateY;
@@ -27,20 +27,20 @@ public class SimEngine {
     private Vector2D netForce;
     private Vector2D acceleration;
 
-    public SimEngine (double mass, double elasticity, double damping, double springLooseLength, double massCoordinateX, double massCoordinateY, double massVelocityX, double massVelocityY, double hookCoordinateX, double hookCoordinateY){
+    public SimEngine (double mass, double elasticity, double damping, double gravitationalAcceleration, double springLooseLength, double massCoordinateX, double massCoordinateY, double massVelocityX, double massVelocityY, double hookCoordinateX, double hookCoordinateY){
         this.mass = mass;
         this.elasticity = elasticity;
         this.damping = damping;
         this.springLooseLength = springLooseLength;
-
         this.massCoordinateX = massCoordinateX;
         this.massCoordinateY = massCoordinateY;
         this.massVelocityX = massVelocityX;
         this.massVelocityY = massVelocityY;
         this.hookCoordinateX = hookCoordinateX;
         this.hookCoordinateY = hookCoordinateY;
+        this.gravitationalAcceleration = gravitationalAcceleration;
 
-        this.gravityForceVector = new Vector2D(0, this.mass * GRAVITATIONAL_ACCELERATION);
+        this.gravityForceVector = new Vector2D(0, this.mass * this.gravitationalAcceleration);
         this.springVector = new Vector2D(this.massCoordinateX - this.hookCoordinateX, this.massCoordinateY - this.hookCoordinateY);
         this.massVelocityVector = new Vector2D (this.massVelocityX , this.massVelocityY);
         this.elasticityForceVector = this.springVector.normalisedVector().multipliedVector( ( this.springLooseLength - this.springVector.lengthOfVector() ) * this.elasticity );
@@ -74,6 +74,7 @@ public class SimEngine {
             case "massVelocityY": this.massVelocityY = value; break;
             case "hookCoordinateX": this.hookCoordinateX = value; break;
             case "hookCoordinateY": this.hookCoordinateY = value; break;
+            case "gravitationalAcceleration": this.gravitationalAcceleration = value; break;
             default: throw new IllegalArgumentException("Invalid field: " + name);
         }
     }
